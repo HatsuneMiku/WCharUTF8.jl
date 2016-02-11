@@ -1,7 +1,7 @@
 WCharUTF8
 =========
 
-[WCharUTF8](https://github.com/999hatsune/WCharUTF8.jl)
+[WCharUTF8](https://github.com/HatsuneMiku/WCharUTF8.jl)
 
 WCharUTF8 converts AbstractString UTF8 to wchar_t or wchar_t to UTF8.
 
@@ -27,7 +27,7 @@ now supports 32bit
 
 # see also
 
-[W32API](https://github.com/999hatsune/W32API.jl)
+[W32API](https://github.com/HatsuneMiku/W32API.jl)
 
 # status
 
