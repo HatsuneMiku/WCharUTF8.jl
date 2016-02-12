@@ -3,7 +3,8 @@ WCharUTF8
 
 [WCharUTF8](https://github.com/HatsuneMiku/WCharUTF8.jl)
 
-WCharUTF8 converts AbstractString UTF8 to wchar_t or wchar_t to UTF8.
+WCharUTF8 converts AbstractString UTF8 to wchar_t or wchar_t ( UTF16 ) to UTF8 .
+It uses Win32API .
 
 
 # UTF8toWCS
