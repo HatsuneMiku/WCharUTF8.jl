@@ -15,4 +15,3 @@ println(format("[{:s}]", bytestring(u))) # "[wwl表示申..]"
 v = WCharUTF8.UTF8toWCS("t漢表申能")
 println(format("[{:s}]", v))
 @test v == Array{UInt16, 1}([0x0074, 0x6f22, 0x8868, 0x7533, 0x80fd, 0x0000])
-@test 1 == 1
