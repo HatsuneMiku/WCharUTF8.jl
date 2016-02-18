@@ -4,9 +4,12 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 module WCharUTF8
 
 import Base
-export UTF8toWCS, WCStoUTF8, MultiByteToWideChar, WideCharToMultiByte
+export MBCStoWCS, WCStoMBCS
+export UTF8toWCS, WCStoUTF8
+export MultiByteToWideChar, WideCharToMultiByte
 
 const _CP_UTF8 = 65001
+const _CP_ACP = 0
 
 function MultiByteToWideChar(
   CodePage, dwFlags,
@@ -58,21 +61,25 @@ function WideCharToMultiByte(
   return err
 end
 
-function UTF8toWCS(UTF8::AbstractString) # expect UTF8String
+function UTF8toWCS(UTF8::AbstractString, cp=_CP_UTF8) # expect UTF8String
   u8len = length(UTF8.data)
-  wclen = MultiByteToWideChar(_CP_UTF8, 0, UTF8, u8len, C_NULL, 0)
+  wclen = MultiByteToWideChar(cp, 0, UTF8, u8len, C_NULL, 0)
   wcs = Array(UInt16, wclen + 1)
-  wclen = MultiByteToWideChar(_CP_UTF8, 0, UTF8, u8len, wcs, wclen + 1) # + 1
+  wclen = MultiByteToWideChar(cp, 0, UTF8, u8len, wcs, wclen + 1) # + 1
   wcs[wclen + 1] = 0
   return wcs
 end
 
-function WCStoUTF8(WCS::Array{UInt16, 1})
-  mblen = WideCharToMultiByte(_CP_UTF8, 0, WCS, -1, C_NULL, 0, C_NULL, C_NULL)
+function WCStoUTF8(WCS::Array{UInt16, 1}, cp=_CP_UTF8)
+  mblen = WideCharToMultiByte(cp, 0, WCS, -1, C_NULL, 0, C_NULL, C_NULL)
   mbs = Array(Int8, mblen + 1)
-  mblen = WideCharToMultiByte(_CP_UTF8, 0, WCS, -1, mbs, mblen, C_NULL, C_NULL)
+  mblen = WideCharToMultiByte(cp, 0, WCS, -1, mbs, mblen, C_NULL, C_NULL)
   mbs[mblen + 1] = 0
-  return map(x -> UInt8(x & 0x0ff), mbs)
+  # return map(x -> UInt8(x & 0x0ff), mbs)
+  return [UInt8(c & 0x0ff) for c in mbs]
 end
+
+MBCStoWCS(mbcs::AbstractString, cp) = UTF8toWCS(mbcs, cp)
+WCStoMBCS(wcs::Array{UInt16, 1}, cp) = WCStoUTF8(wcs, cp)
 
 end

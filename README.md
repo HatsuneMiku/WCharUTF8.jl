@@ -21,6 +21,20 @@ WCStoUTF8(WCS::Array{UInt16, 1}) # Array{UInt8, 1} (UTF8String)
 ```
 
 
+# MBCStoWCS
+
+```julia
+MBCStoWCS(mbcs::AbstractString, cp) = UTF8toWCS(mbcs, cp)
+```
+
+
+# WCStoMBCS
+
+```julia
+WCStoMBCS(wcs::Array{UInt16, 1}, cp) = WCStoUTF8(wcs, cp)
+```
+
+
 # Acknowledgements
 
 now supports 32bit
