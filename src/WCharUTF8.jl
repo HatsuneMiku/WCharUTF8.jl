@@ -61,25 +61,34 @@ function WideCharToMultiByte(
   return err
 end
 
-function UTF8toWCS(UTF8::AbstractString, cp=_CP_UTF8) # expect UTF8String
-  u8len = length(UTF8.data)
+function UTF8toWCS(UTF8::AbstractString; eos::Bool=false, cp=_CP_UTF8) # expect UTF8String
+  u8len = sizeof(UTF8.data)
   wclen = MultiByteToWideChar(cp, 0, UTF8, u8len, C_NULL, 0)
   wcs = Array(UInt16, wclen + 1)
   wclen = MultiByteToWideChar(cp, 0, UTF8, u8len, wcs, wclen + 1) # + 1
-  wcs[wclen + 1] = 0
-  return wcs
+  if eos
+    wcs[wclen + 1] = 0
+    return wcs
+  else
+    return wcs[1:wclen]
+  end
 end
 
-function WCStoUTF8(WCS::Array{UInt16, 1}, cp=_CP_UTF8)
-  mblen = WideCharToMultiByte(cp, 0, WCS, -1, C_NULL, 0, C_NULL, C_NULL)
+function WCStoUTF8(WCS::Array{UInt16, 1}; eos::Bool=false, cp=_CP_UTF8)
+  wclen = length(WCS)
+  mblen = WideCharToMultiByte(cp, 0, WCS, wclen, C_NULL, 0, C_NULL, C_NULL)
   mbs = Array(Int8, mblen + 1)
-  mblen = WideCharToMultiByte(cp, 0, WCS, -1, mbs, mblen, C_NULL, C_NULL)
-  mbs[mblen + 1] = 0
-  # return map(x -> UInt8(x & 0x0ff), mbs)
-  return [UInt8(c & 0x0ff) for c in mbs]
+  mblen = WideCharToMultiByte(cp, 0, WCS, wclen, mbs, mblen, C_NULL, C_NULL)
+  if eos
+    mbs[mblen + 1] = 0
+    # return map(x -> UInt8(x & 0x0ff), mbs)
+    return [UInt8(c & 0x0ff) for c in mbs]
+  else
+    return [UInt8(c & 0x0ff) for c in mbs[1:mblen]]
+  end
 end
 
-MBCStoWCS(mbcs::AbstractString, cp) = UTF8toWCS(mbcs, cp)
-WCStoMBCS(wcs::Array{UInt16, 1}, cp) = WCStoUTF8(wcs, cp)
+MBCStoWCS(mbcs::AbstractString, cp=_CP_ACP, eos::Bool=false) = UTF8toWCS(mbcs; eos=eos, cp=cp)
+WCStoMBCS(wcs::Array{UInt16, 1}, cp=_CP_ACP, eos::Bool=false) = WCStoUTF8(wcs; eos=eos, cp=cp)
 
 end

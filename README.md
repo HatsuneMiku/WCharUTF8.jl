@@ -10,28 +10,28 @@ It uses Win32API .
 # UTF8toWCS
 
 ```julia
-UTF8toWCS(UTF8::AbstractString) # Array{UInt16, 1}
+UTF8toWCS(UTF8::AbstractString; eos::Bool=false, cp=_CP_UTF8) # Array{UInt16, 1}
 ```
 
 
 # WCStoUTF8
 
 ```julia
-WCStoUTF8(WCS::Array{UInt16, 1}) # Array{UInt8, 1} (UTF8String)
+WCStoUTF8(WCS::Array{UInt16, 1}; eos::Bool=false, cp=_CP_UTF8) # Array{UInt8, 1} (UTF8String)
 ```
 
 
 # MBCStoWCS
 
 ```julia
-MBCStoWCS(mbcs::AbstractString, cp) = UTF8toWCS(mbcs, cp)
+MBCStoWCS(mbcs::AbstractString, cp=_CP_ACP, eos::Bool=false) = UTF8toWCS(mbcs; eos=eos, cp=cp)
 ```
 
 
 # WCStoMBCS
 
 ```julia
-WCStoMBCS(wcs::Array{UInt16, 1}, cp) = WCStoUTF8(wcs, cp)
+WCStoMBCS(wcs::Array{UInt16, 1}, cp=_CP_ACP, eos::Bool=false) = WCStoUTF8(wcs; eos=eos, cp=cp)
 ```
 
 
